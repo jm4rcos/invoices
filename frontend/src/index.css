@@ -17,6 +17,26 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --background: #fcfcfc;
+  --primary: #e3ffa8;
+  --secondary: #45ffbc;
+  --muted: #bdbbb7;
+  --accent: #e0e0e0;
+
+  --text: #969696;
+  --title: #212121;
+
+  .dark {
+    --background: #1f1f1f;
+    --primary: #e3ffa8;
+    --secondary: #45ffbc;
+    --muted: #bdbbb7;
+    --accent: #2c333b;
+
+    --text: #7e867b;
+    --title: #fff;
+  }
 }
 
 a {
