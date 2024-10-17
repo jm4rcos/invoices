@@ -5,14 +5,9 @@ const zod_1 = require("zod");
 const invoiceSchema = zod_1.z.object({
     id: zod_1.z.string(),
     clientNumber: zod_1.z.string(),
-    referenceMonth: zod_1.z.date(),
+    referenceMonth: zod_1.z.string(),
     energyConsumption: zod_1.z.number(),
-    energySceeeWithoutIcms: zod_1.z.number(),
     compensatedEnergy: zod_1.z.number(),
-    publicLightingContribution: zod_1.z.number(),
-    totalValueWithoutGd: zod_1.z.number(),
-    gdSavings: zod_1.z.number(),
-    createdAt: zod_1.z.date(),
-    updatedAt: zod_1.z.date(),
+    totalValue: zod_1.z.number(),
 });
 exports.invoiceSchema = invoiceSchema;

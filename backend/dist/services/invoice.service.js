@@ -40,21 +40,12 @@ class InvoiceService {
     getDashboardData() {
         return __awaiter(this, void 0, void 0, function* () {
             const invoices = yield prisma.invoice.findMany();
-            // Aqui você implementaria a lógica para calcular os totais e preparar os dados para o dashboard
-            // Este é apenas um exemplo simplificado
-            // const totalEnergyConsumption = invoices.reduce(
-            //   (sum, invoice) => sum + invoice.energyConsumption,
-            //   0
-            // );
-            // const totalCompensatedEnergy = invoices.reduce(
-            //   (sum, invoice) => sum + invoice.compensatedEnergy,
-            //   0
-            // );
-            // return {
-            //   totalEnergyConsumption,
-            //   totalCompensatedEnergy,
-            //   // Adicione outros cálculos relevantes aqui
-            // };
+            const totalEnergyConsumption = invoices.reduce((sum, invoice) => sum + invoice.energyConsumption, 0);
+            const totalCompensatedEnergy = invoices.reduce((sum, invoice) => sum + invoice.compensatedEnergy, 0);
+            return {
+                totalEnergyConsumption,
+                totalCompensatedEnergy,
+            };
         });
     }
 }

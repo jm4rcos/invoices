@@ -28,18 +28,18 @@ export class InvoiceService {
   async getDashboardData() {
     const invoices = await prisma.invoice.findMany();
 
-    // const totalEnergyConsumption = invoices.reduce(
-    //   (sum, invoice) => sum + invoice.energyConsumption,
-    //   0
-    // );
-    // const totalCompensatedEnergy = invoices.reduce(
-    //   (sum, invoice) => sum + invoice.compensatedEnergy,
-    //   0
-    // );
+    const totalEnergyConsumption = invoices.reduce(
+      (sum, invoice) => sum + invoice.energyConsumption,
+      0
+    );
+    const totalCompensatedEnergy = invoices.reduce(
+      (sum, invoice) => sum + invoice.compensatedEnergy,
+      0
+    );
 
-    // return {
-    //   totalEnergyConsumption,
-    //   totalCompensatedEnergy,
-    // };
+    return {
+      totalEnergyConsumption,
+      totalCompensatedEnergy,
+    };
   }
 }

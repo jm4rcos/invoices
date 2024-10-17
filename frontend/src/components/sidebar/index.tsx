@@ -29,20 +29,18 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="h-full w-64 p-4">
-      <nav>
-        <ul className="font-normal space-y-2 text-text pt-4">
-          {sidebarItemsData.map((item) => (
-            <SidebarItem
-              key={item.href}
-              {...item}
-              isActive={activeItem === item.href}
-              onClick={() => handleItemClick(item.href)}
-            />
-          ))}
-        </ul>
-      </nav>
-    </div>
+    <nav className="w-60 p-4">
+      <ul className="font-normal space-y-2 text-text pt-4">
+        {sidebarItemsData.map((item) => (
+          <SidebarItem
+            key={item.href}
+            {...item}
+            isActive={activeItem === item.href}
+            onClick={() => handleItemClick(item.href)}
+          />
+        ))}
+      </ul>
+    </nav>
   );
 };
 

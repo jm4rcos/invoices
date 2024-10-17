@@ -38,8 +38,6 @@ export class InvoiceController {
     res: Response,
     next: NextFunction
   ): Promise<void> => {
-    console.log("Getting invoices...");
-
     try {
       const { clientNumber, month } = req.query;
       const invoices = await this.invoiceService.getInvoices(
