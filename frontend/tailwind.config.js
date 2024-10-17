@@ -4,13 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "hsl(var--background)",
-        primary: "hsl(var--primary)",
-        secondary: "hsl(var--secondary)",
-        muted: "hsl(var--muted)",
-        accent: "hsl(var--accent)",
-        text: "hsl(var--text)",
-        title: "hsl(var--title)",
+        background: "var(--background)",
+        primary: "var(--primary)",
+        secondary: "var(--secondary)",
+        muted: "var(--muted)",
+        accent: "var(--accent)",
+        text: "var(--text)",
+        title: "var(--title)",
       },
     },
   },
