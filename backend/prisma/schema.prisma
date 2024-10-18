@@ -8,19 +8,21 @@ datasource db {
 }
 
 model ConsumerUnit {
-  id                  Int      @id @default(autoincrement())
+  id                  String   @id @default(uuid())
   clientNumber        String   @unique
-  installationNumber  String @unique
+  clientName          String
+  installationNumber  String   @unique
   invoices            Invoice[]
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
 
 model Invoice {
-  id                                  Int      @id @default(autoincrement())
+  id                                  String   @id @default(uuid())
   consumerUnit                        ConsumerUnit @relation(fields: [consumerUnitId], references: [id])
-  consumerUnitId                      Int
-  referenceMonth                      String
+  consumerUnitId                      String
+  distributor                         String
+  referenceMonth                      String  
   electricityKwh                      Float
   electricityValue                    Float
   sceeEnergyKwh                       Float
@@ -31,6 +33,4 @@ model Invoice {
   pdfUrl                              String
   createdAt                           DateTime @default(now())
   updatedAt                           DateTime @updatedAt
-
-   @@unique([consumerUnitId, referenceMonth])
 }

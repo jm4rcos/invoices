@@ -18,11 +18,10 @@ class InvoiceController {
             try {
                 const pdfFile = req.file;
                 if (!pdfFile) {
-                    res.status(400).json({ message: "No PDF file uploaded" });
+                    res.status(400).json({ message: "Nenhum PDF foi enviado" });
                     return;
                 }
                 const extractedData = yield this.pdfService.extractDataFromPDF(pdfFile.buffer);
-                // Passa o buffer do PDF para o serviço de fatura
                 const upsertedInvoice = yield this.invoiceService.createInvoice(extractedData, pdfFile.buffer);
                 res.status(200).json(upsertedInvoice);
             }

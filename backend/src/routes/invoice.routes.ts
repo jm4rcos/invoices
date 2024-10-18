@@ -5,25 +5,19 @@ import { InvoiceController } from "../controllers/invoice.controller";
 import { InvoiceService } from "../services/invoice.service";
 import { PdfService } from "../services/pdf.service";
 
-const router = Router();
+const invoiceRouter = Router();
 const upload = multer();
 
 const pdfService = new PdfService();
 const invoiceService = new InvoiceService();
 const invoiceController = new InvoiceController(pdfService, invoiceService);
 
-router.post("/upload", upload.single("pdf"), invoiceController.uploadInvoice);
+invoiceRouter.post(
+  "/upload",
+  upload.single("pdf"),
+  invoiceController.uploadInvoice.bind(invoiceController)
+);
 
-router.get("/", invoiceController.getInvoices.bind(invoiceController));
+invoiceRouter.get("/", invoiceController.getInvoices.bind(invoiceController));
 
-// router.get(
-//   "/:clientNumber",
-//   invoiceController.getInvoicesByClientNumber.bind(invoiceController)
-// );
-
-// router.get(
-//   "/dashboard",
-//   invoiceController.getDashboardData.bind(invoiceController)
-// );
-
-export default router;
+export default invoiceRouter;

@@ -1,20 +1,21 @@
 import pdf from "pdf-parse";
+import { ExtractInvoice } from "../dtos/extract-invoice.dto";
 
 export class PdfService {
   async extractDataFromPDF(pdfBuffer: Buffer) {
     const data = await pdf(pdfBuffer);
 
-    const extractedData = {
-      consumerUnit: {
-        clientNumber: this.extractClientNumber(data.text),
-        installationNumber: this.extractInstallationNumber(data.text),
-      },
+    const extractedData: ExtractInvoice = {
+      clientNumber: this.extractClientNumber(data.text),
+      clientName: this.extractConsumerName(data.text),
+      installationNumber: this.extractInstallationNumber(data.text),
       invoice: {
         referenceMonth: this.extractReferenceMonth(data.text),
         electricityKwh: this.extractElectricityKwh(data.text),
         electricityValue: this.extractElectricityValue(data.text),
         sceeEnergyKwh: this.extractSceeEnergyKwh(data.text),
         sceeEnergyValue: this.extractSceeEnergyValue(data.text),
+        distributor: this.extractDistributorName(data.text),
         compensatedEnergyGDIKwh: this.extractCompensatedEnergyGDIKwh(data.text),
         compensatedEnergyGDIValue: this.extractCompensatedEnergyGDIValue(
           data.text
@@ -23,6 +24,7 @@ export class PdfService {
         pdfUrl: "",
       },
     };
+
     return extractedData;
   }
 
@@ -30,7 +32,31 @@ export class PdfService {
     const clientNumberMatch = text.match(
       /Nº DO CLIENTE\s+Nº DA INSTALAÇÃO\s+(\d+)\s+(\d+)/
     );
+
     return clientNumberMatch ? clientNumberMatch[1] : "";
+  }
+
+  private extractConsumerName(text: string): string {
+    const companyPatterns = [
+      "SELFWAY TREINAMENTO PERSONALIZADO LTDA",
+      "JOSE MESALY FONSECA DE CARVALHO 52024156",
+    ];
+
+    for (const pattern of companyPatterns) {
+      const companyMatch = text.match(new RegExp(pattern));
+      if (companyMatch) {
+        return companyMatch[0];
+      }
+    }
+
+    return "Sem Nome";
+  }
+
+  private extractDistributorName(text: string): string {
+    const distributorLineMatch = text.match(
+      /DOCUMENTO AUXILIAR DA NOTA FISCAL DE ENERGIA ELÉTRICA ELETRÔNICA SEGUNDA VIA\s+(.+?)\s+CNPJ/
+    );
+    return distributorLineMatch ? distributorLineMatch[1].trim() : "";
   }
 
   private extractInstallationNumber(text: string): string {

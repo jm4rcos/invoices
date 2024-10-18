@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const consumer_controller_1 = require("../controllers/consumer.controller");
+const consumer_service_1 = require("../services/consumer.service");
+const consumerRouter = (0, express_1.Router)();
+const consumerService = new consumer_service_1.ConsumerService();
+const consumerController = new consumer_controller_1.ConsumerController(consumerService);
+consumerRouter.get("/", consumerController.getAllConsumerUnits.bind(consumerController));
+consumerRouter.get("/:clientNumber", consumerController.getConsumerUnit.bind(consumerController));
+exports.default = consumerRouter;
