@@ -21,7 +21,6 @@ export const Card = ({ title, color, subtitle, icon: Icon }: CardProps) => {
           <p className="text-md font-semibold">{subtitle}</p>
         </div>
       </div>
-      <h4 className="text-[#1f1f1f] text-md font-semibold">Go to service</h4>
     </div>
   );
 };

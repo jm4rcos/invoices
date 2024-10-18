@@ -27,7 +27,7 @@ export function AriaChart({ chartData, dataKeys }: AriaChartProps) {
     <ResponsiveContainer width="100%" height={300}>
       <AreaChart
         data={chartData}
-        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+        margin={{ top: 20, right: 30, left: 10, bottom: 5 }}
       >
         <defs>
           {dataKeys.map((key, index) => (
@@ -44,8 +44,19 @@ export function AriaChart({ chartData, dataKeys }: AriaChartProps) {
             </linearGradient>
           ))}
         </defs>
-        <XAxis dataKey="month" />
-        <YAxis />
+        <XAxis
+          dataKey="month"
+          tickLine={false}
+          tickMargin={10}
+          axisLine={false}
+          tickFormatter={(value) => `${value}`}
+        />
+        <YAxis
+          tickLine={false}
+          tickMargin={10}
+          axisLine={false}
+          tickFormatter={(value) => `${value} kWh`}
+        />
         <CartesianGrid strokeDasharray="3 3" />
         <Tooltip />
         <Legend />

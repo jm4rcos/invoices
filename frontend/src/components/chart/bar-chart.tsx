@@ -34,8 +34,18 @@ export function BarChart({ chartData, dataKeys }: BarChartProps) {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="month" />
-        <YAxis />
+        <XAxis
+          dataKey="month"
+          tickLine={false}
+          tickMargin={10}
+          axisLine={false}
+        />
+        <YAxis
+          tickLine={false}
+          tickMargin={10}
+          axisLine={false}
+          tickFormatter={(value) => `${value} kWh`}
+        />
         <Tooltip />
         <Legend />
         {dataKeys.map((key, index) => (

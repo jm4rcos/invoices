@@ -30,7 +30,6 @@ class InvoiceController {
             }
         });
         this.getInvoices = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            console.log("Getting invoices...");
             try {
                 const { clientNumber, month } = req.query;
                 const invoices = yield this.invoiceService.getInvoices(clientNumber, month);
