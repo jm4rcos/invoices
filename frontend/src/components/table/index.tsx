@@ -1,10 +1,11 @@
-import { FileTextIcon } from "lucide-react";
+import { FileTextIcon, XIcon } from "lucide-react";
 import { Consumer } from "../../schemas";
 import { Tootilip } from "../tooltip";
 
 interface TableProps {
   data: Consumer[];
 }
+
 export const Table = ({ data }: TableProps) => {
   const months = [
     "Jan",
@@ -37,27 +38,50 @@ export const Table = ({ data }: TableProps) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
+          {data.map((item: Consumer) => (
             <tr
               key={item.id}
               className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
             >
-              <td className="px-6 py-4 max-w-[220px] truncate">
+              <td className="px-6 py-4 max-w-[300px] truncate">
                 {item.clientName}
               </td>
-              <td className="px-6 py-4">{item.clientNumber}</td>
-              <td className="px-6 py-4">CEMIG</td>
-              <td className="px-6 py-4 max-w-[220px] truncate">
+              <td className="px-6 text-center py-4">{item.clientNumber}</td>
+              <td className="px-6 text-center py-4">CEMIG</td>
+              <td className="px-6 py-4 max-w-[300px] truncate">
                 {item.clientName}
               </td>
-              {months.map((month) => (
-                <td key={`${item.id}-${month}`} className="px-6 py-4">
-                  <div className="relative group">
-                    <FileTextIcon className="w-6 h-6 hover:text-secondary cursor-pointer" />
-                    <Tootilip title="Download" />
-                  </div>
-                </td>
-              ))}
+              {months.map((month, index) => {
+                const invoice = item.invoices && item.invoices[index];
+
+                if (!item.invoices[index]) {
+                  return (
+                    <td className="px-6 py-4" key={`${item.id}-${month}`}>
+                      <div className="group relative">
+                        <XIcon className="w-6 h-6 text-rose-400 cursor-pointer" />
+                        <Tootilip title="Em falta" />
+                      </div>
+                    </td>
+                  );
+                }
+
+                return (
+                  <td key={`${item.id}-${month}`} className="px-6 py-4">
+                    {invoice ? (
+                      <a
+                        className="relative group"
+                        href={invoice.pdfUrl}
+                        target="_blank"
+                      >
+                        <FileTextIcon className="w-6 h-6 hover:text-secondary cursor-pointer" />
+                        <Tootilip title="Download" />
+                      </a>
+                    ) : (
+                      <span className="text-gray-400">N/A</span>
+                    )}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

@@ -20,7 +20,7 @@ class ConsumerRepository {
     }
     findMany(where) {
         return __awaiter(this, void 0, void 0, function* () {
-            return prisma.consumerUnit.findMany({ where });
+            return prisma.consumerUnit.findMany({ where, include: { invoices: true } });
         });
     }
     create(data) {

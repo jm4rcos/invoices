@@ -17,7 +17,7 @@ export class ConsumerRepository {
   }
 
   async findMany(where?: Partial<ConsumerUnit>): Promise<ConsumerUnit[]> {
-    return prisma.consumerUnit.findMany({ where });
+    return prisma.consumerUnit.findMany({ where, include: { invoices: true } });
   }
 
   async create(data: CreateConsumer): Promise<ConsumerUnit> {
