@@ -1,17 +1,9 @@
 import React from "react";
-import { AtomIcon, Bell, Search } from "lucide-react";
-
-interface NavItem {
-  label: string;
-  isActive?: boolean;
-}
-
-const navItems: NavItem[] = [
-  { label: "Cliente", isActive: false },
-  { label: "Configurações", isActive: true },
-];
+import { AtomIcon, MenuIcon, XIcon } from "lucide-react";
+import { useSidebarStore } from "../../store/use-sidebar-store";
 
 const Navbar: React.FC = () => {
+  const { isOpen, toggleSidebar } = useSidebarStore();
   return (
     <nav className="flex items-center justify-between px-6 p-6 bg-background border-b border-accent text-white">
       <div className="flex items-center space-x-20">
@@ -19,25 +11,18 @@ const Navbar: React.FC = () => {
           <AtomIcon className="text-secondary h-8 w-8" />
           <span className="font-bold text-xl">Lumi</span>
         </div>
-        <ul className="flex space-x-6">
-          {navItems.map((item, index) => (
-            <li key={index}>
-              <a
-                href="#"
-                className={`${
-                  item.isActive ? "text-title" : "text-text"
-                } hover:text-secondary transition-colors`}
-              >
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
       </div>
       <div className="flex items-center space-x-4">
-        <span>João Marcos</span>
-        <Search className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
-        <Bell className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer" />
+        <div
+          onClick={toggleSidebar}
+          className="lg:hidden flex items-center justify-center rounded-full bg-accent p-2"
+        >
+          {!isOpen ? (
+            <MenuIcon className="w-6 h-6 text-gray-400 hover:text-title cursor-pointer transition-colors duration-300" />
+          ) : (
+            <XIcon className="w-6 h-6 text-gray-400 hover:text-title cursor-pointer transition-colors duration-300" />
+          )}
+        </div>
       </div>
     </nav>
   );

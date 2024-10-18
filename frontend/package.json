@@ -17,7 +17,8 @@
     "react-router-dom": "^6.27.0",
     "recharts": "^2.13.0",
     "vite-plugin-pages": "^0.32.3",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^5.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",

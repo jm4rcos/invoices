@@ -22,7 +22,7 @@ const sidebarItemsData: SidebarItemData[] = [
   },
 ];
 
-const Sidebar: React.FC = () => {
+const MobileSidebar: React.FC = () => {
   const location = useLocation();
 
   const [activeItem, setActiveItem] = useState(location.pathname);
@@ -32,7 +32,7 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <nav className="lg:w-60 p-4 w-full">
+    <nav className="lg:hidden flex flex-col absolute p-4 w-full h-screen bg-background">
       <ul className="font-normal flex-col space-y-2 text-text pt-4">
         {sidebarItemsData.map((item) => (
           <SidebarItem
@@ -47,4 +47,4 @@ const Sidebar: React.FC = () => {
   );
 };
 
-export default Sidebar;
+export default MobileSidebar;
