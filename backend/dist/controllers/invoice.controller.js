@@ -22,7 +22,8 @@ class InvoiceController {
                     return;
                 }
                 const extractedData = yield this.pdfService.extractDataFromPDF(pdfFile.buffer);
-                const upsertedInvoice = yield this.invoiceService.createInvoice(extractedData);
+                // Passa o buffer do PDF para o serviço de fatura
+                const upsertedInvoice = yield this.invoiceService.createInvoice(extractedData, pdfFile.buffer);
                 res.status(200).json(upsertedInvoice);
             }
             catch (error) {
@@ -34,15 +35,6 @@ class InvoiceController {
                 const { clientNumber, month } = req.query;
                 const invoices = yield this.invoiceService.getInvoices(clientNumber, month);
                 res.json(invoices);
-            }
-            catch (error) {
-                next(error);
-            }
-        });
-        this.getDashboardData = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const dashboardData = yield this.invoiceService.getDashboardData();
-                res.json(dashboardData);
             }
             catch (error) {
                 next(error);

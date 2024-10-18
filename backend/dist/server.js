@@ -13,9 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
-const dotenv_1 = require("dotenv");
 const app_1 = __importDefault(require("./app"));
-(0, dotenv_1.config)();
 const prisma = new client_1.PrismaClient();
 const PORT = process.env.PORT || 3333;
 function startServer() {

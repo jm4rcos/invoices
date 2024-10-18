@@ -4,16 +4,25 @@ export class PdfService {
   async extractDataFromPDF(pdfBuffer: Buffer) {
     const data = await pdf(pdfBuffer);
 
-    console.log("Extracted data:", data);
-
     const extractedData = {
-      clientNumber: this.extractClientNumber(data.text),
-      referenceMonth: this.extractReferenceMonth(data.text),
-      energyConsumption: this.extractEnergyConsumption(data.text),
-      compensatedEnergy: this.extractCompensatedEnergy(data.text),
-      totalValue: this.extractTotalValue(data.text),
+      consumerUnit: {
+        clientNumber: this.extractClientNumber(data.text),
+        installationNumber: this.extractInstallationNumber(data.text),
+      },
+      invoice: {
+        referenceMonth: this.extractReferenceMonth(data.text),
+        electricityKwh: this.extractElectricityKwh(data.text),
+        electricityValue: this.extractElectricityValue(data.text),
+        sceeEnergyKwh: this.extractSceeEnergyKwh(data.text),
+        sceeEnergyValue: this.extractSceeEnergyValue(data.text),
+        compensatedEnergyGDIKwh: this.extractCompensatedEnergyGDIKwh(data.text),
+        compensatedEnergyGDIValue: this.extractCompensatedEnergyGDIValue(
+          data.text
+        ),
+        totalValue: this.extractTotalValue(data.text),
+        pdfUrl: "",
+      },
     };
-
     return extractedData;
   }
 
@@ -22,6 +31,17 @@ export class PdfService {
       /Nº DO CLIENTE\s+Nº DA INSTALAÇÃO\s+(\d+)\s+(\d+)/
     );
     return clientNumberMatch ? clientNumberMatch[1] : "";
+  }
+
+  private extractInstallationNumber(text: string): string {
+    const regex = /\s*(\d+)\s+(?=Referente a)/; // Captura o número antes de "Referente a"
+    const match = text.match(regex);
+
+    if (match && match[1]) {
+      return match[1];
+    } else {
+      return "";
+    }
   }
 
   private extractReferenceMonth(text: string): string {
@@ -35,50 +55,42 @@ export class PdfService {
     return referenceMonthMatch[1];
   }
 
-  private extractEnergyConsumption(text: string): number {
-    const energyElectricMatch = text.match(/Energia ElétricakWh\s+(\d+)/);
-    const energySCEEMatch = text.match(/Energia SCEE s\/ ICMSkWh\s+(\d+)/);
-
-    const energyElectric = energyElectricMatch
-      ? parseInt(energyElectricMatch[1], 10)
-      : 0;
-    const energySCEE = energySCEEMatch ? parseInt(energySCEEMatch[1], 10) : 0;
-
-    return energyElectric + energySCEE;
+  private extractElectricityKwh(text: string): number {
+    const match = text.match(/Energia ElétricakWh\s+(\d+)/);
+    return match ? parseInt(match[1], 10) : 0;
   }
 
-  private extractCompensatedEnergy(text: string): number {
-    const compensatedEnergyMatch = text.match(
-      /Energia compensada GD IkWh\s+\d+\s+(-?\d+,\d+)/
+  private extractElectricityValue(text: string): number {
+    const match = text.match(/Energia ElétricakWh\s+\d+\s+[\d,]+\s+([\d,]+)/);
+    return match ? parseFloat(match[1].replace(",", ".")) : 0;
+  }
+
+  private extractSceeEnergyKwh(text: string): number {
+    const match = text.match(/Energia SCEE s\/ ICMSkWh\s+(\d+)/);
+    return match ? parseInt(match[1], 10) : 0;
+  }
+
+  private extractSceeEnergyValue(text: string): number {
+    const match = text.match(
+      /Energia SCEE s\/ ICMSkWh\s+\d+\s+[\d,]+\s+([\d,]+)/
     );
-    return compensatedEnergyMatch
-      ? parseFloat(compensatedEnergyMatch[1].replace(",", "."))
-      : 0;
+    return match ? parseFloat(match[1].replace(",", ".")) : 0;
+  }
+
+  private extractCompensatedEnergyGDIKwh(text: string): number {
+    const match = text.match(/Energia compensada GD IkWh\s+(\d+)/);
+    return match ? parseInt(match[1], 10) : 0;
+  }
+
+  private extractCompensatedEnergyGDIValue(text: string): number {
+    const match = text.match(
+      /Energia compensada GD IkWh\s+\d+\s+[\d,]+\s+(-?[\d,]+)/
+    );
+    return match ? parseFloat(match[1].replace(",", ".")) : 0;
   }
 
   private extractTotalValue(text: string): number {
-    const energyElectricValueMatch = text.match(
-      /Energia ElétricakWh\s+\d+\s+\d+,\d+\s+(\d+,\d+)/
-    );
-    const energySCEEValueMatch = text.match(
-      /Energia SCEE s\/ ICMSkWh\s+\d+\s+\d+,\d+\s+(\d+,\d+)/
-    );
-    const contribMunicipalMatch = text.match(
-      /Contrib Ilum Publica Municipal\s+(\d+,\d+)/
-    );
-
-    const energyElectricValue = energyElectricValueMatch
-      ? parseFloat(energyElectricValueMatch[1].replace(",", "."))
-      : 0;
-    const energySCEEValue = energySCEEValueMatch
-      ? parseFloat(energySCEEValueMatch[1].replace(",", "."))
-      : 0;
-    const contribMunicipal = contribMunicipalMatch
-      ? parseFloat(contribMunicipalMatch[1].replace(",", "."))
-      : 0;
-
-    return parseFloat(
-      (energyElectricValue + energySCEEValue + contribMunicipal).toFixed(2)
-    );
+    const match = text.match(/TOTAL\s+([\d,]+)/);
+    return match ? parseFloat(match[1].replace(",", ".")) : 0;
   }
 }

@@ -8,11 +8,7 @@ export class InvoiceController {
     private invoiceService: InvoiceService
   ) {}
 
-  uploadInvoice = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
+  uploadInvoice = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const pdfFile = req.file;
       if (!pdfFile) {
@@ -23,8 +19,10 @@ export class InvoiceController {
         pdfFile.buffer
       );
 
+      // Passa o buffer do PDF para o serviço de fatura
       const upsertedInvoice = await this.invoiceService.createInvoice(
-        extractedData
+        extractedData,
+        pdfFile.buffer
       );
 
       res.status(200).json(upsertedInvoice);
@@ -33,11 +31,7 @@ export class InvoiceController {
     }
   };
 
-  getInvoices = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
+  getInvoices = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { clientNumber, month } = req.query;
       const invoices = await this.invoiceService.getInvoices(
@@ -45,19 +39,6 @@ export class InvoiceController {
         month as string
       );
       res.json(invoices);
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  getDashboardData = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
-    try {
-      const dashboardData = await this.invoiceService.getDashboardData();
-      res.json(dashboardData);
     } catch (error) {
       next(error);
     }

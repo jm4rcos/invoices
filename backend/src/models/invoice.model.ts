@@ -1,14 +1,21 @@
 import { z } from "zod";
 
-const invoiceSchema = z.object({
-  id: z.string(),
-  clientNumber: z.string(),
+const InvoiceSchema = z.object({
+  id: z.number().int().optional(),
+  consumerUnitId: z.number().int(),
   referenceMonth: z.string(),
-  energyConsumption: z.number(),
-  compensatedEnergy: z.number(),
-  totalValue: z.number(),
+  electricityKwh: z.number().min(0),
+  electricityValue: z.number().min(0),
+  sceeEnergyKwh: z.number().min(0),
+  sceeEnergyValue: z.number().min(0),
+  compensatedEnergyGDIKwh: z.number().min(0),
+  compensatedEnergyGDIValue: z.number().min(0),
+  totalValue: z.number().min(0),
+  pdfUrl: z.string().optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 
-type Invoice = z.infer<typeof invoiceSchema>;
+type Invoice = z.infer<typeof InvoiceSchema>;
 
-export { Invoice, invoiceSchema };
+export { Invoice, InvoiceSchema };

@@ -7,15 +7,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Invoice {
-  id                String      @id @default(uuid())
-  clientNumber      String
-  referenceMonth    String
-  energyConsumption Float
-  compensatedEnergy Float
-  totalValue        Float
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+model ConsumerUnit {
+  id                  Int      @id @default(autoincrement())
+  clientNumber        String   @unique
+  installationNumber  String @unique
+  invoices            Invoice[]
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
 
-  @@unique([clientNumber, referenceMonth])
+model Invoice {
+  id                                  Int      @id @default(autoincrement())
+  consumerUnit                        ConsumerUnit @relation(fields: [consumerUnitId], references: [id])
+  consumerUnitId                      Int
+  referenceMonth                      String
+  electricityKwh                      Float
+  electricityValue                    Float
+  sceeEnergyKwh                       Float
+  sceeEnergyValue                     Float
+  compensatedEnergyGDIKwh             Float
+  compensatedEnergyGDIValue           Float
+  totalValue                          Float
+  pdfUrl                              String
+  createdAt                           DateTime @default(now())
+  updatedAt                           DateTime @updatedAt
+
+   @@unique([consumerUnitId, referenceMonth])
 }

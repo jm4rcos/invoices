@@ -15,5 +15,12 @@ const invoiceService = new invoice_service_1.InvoiceService();
 const invoiceController = new invoice_controller_1.InvoiceController(pdfService, invoiceService);
 router.post("/upload", upload.single("pdf"), invoiceController.uploadInvoice);
 router.get("/", invoiceController.getInvoices.bind(invoiceController));
-router.get("/dashboard", invoiceController.getDashboardData.bind(invoiceController));
+// router.get(
+//   "/:clientNumber",
+//   invoiceController.getInvoicesByClientNumber.bind(invoiceController)
+// );
+// router.get(
+//   "/dashboard",
+//   invoiceController.getDashboardData.bind(invoiceController)
+// );
 exports.default = router;
