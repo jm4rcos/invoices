@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FileTextIcon, LayoutDashboardIcon, LucideIcon } from "lucide-react";
 import { SidebarItem } from "./sidebar-item";
 import { useLocation } from "react-router-dom";
+import { useSidebarStore } from "../../store/use-sidebar-store";
 
 interface SidebarItemData {
   icon: LucideIcon;
@@ -23,12 +24,16 @@ const sidebarItemsData: SidebarItemData[] = [
 ];
 
 const MobileSidebar: React.FC = () => {
+  const { closeSidebar } = useSidebarStore();
+
   const location = useLocation();
 
   const [activeItem, setActiveItem] = useState(location.pathname);
 
   const handleItemClick = (href: string) => {
     setActiveItem(href);
+
+    closeSidebar();
   };
 
   return (
