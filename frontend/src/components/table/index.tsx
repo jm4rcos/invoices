@@ -1,12 +1,22 @@
 import { FileTextIcon, XIcon } from "lucide-react";
 import { Consumer } from "../../schemas";
 import { Tootilip } from "../tooltip";
+import { useSearchParams } from "react-router-dom";
+import { Input } from "../input";
 
 interface TableProps {
   data: Consumer[];
 }
 
 export const Table = ({ data }: TableProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const clientNumberFilter = searchParams.get("clientNumber") || "";
+  const yearFilter = parseInt(
+    searchParams.get("year") || new Date().getFullYear().toString(),
+    10
+  );
+
   const months = [
     "Jan",
     "Fev",
@@ -19,8 +29,45 @@ export const Table = ({ data }: TableProps) => {
     "Set",
   ];
 
+  const filteredData = data.filter((item) => {
+    const clientNumberMatch = item.clientNumber.includes(clientNumberFilter);
+    const yearMatch = item.invoices.some((invoice) => {
+      const invoiceYear = parseInt(invoice.referenceMonth.split("/")[1], 10);
+      return invoiceYear === yearFilter;
+    });
+    return clientNumberMatch && yearMatch;
+  });
+
+  const handleFilterByYear = (value: string | number) => {
+    const convertedValue = Number(value);
+    setSearchParams({
+      ...Object.fromEntries(searchParams),
+      year: convertedValue.toString(),
+    });
+  };
+
+  const handleFilterByClientNumber = (value: string | number) => {
+    setSearchParams({
+      ...Object.fromEntries(searchParams),
+      clientNumber: value.toString(),
+    });
+  };
+
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <div className="py-4 space-x-4">
+        <Input
+          placeholder="Nº do cliente"
+          value={clientNumberFilter}
+          onChange={handleFilterByClientNumber}
+        />
+        <Input
+          type="number"
+          placeholder="Filtrar por ano"
+          value={yearFilter}
+          onChange={handleFilterByYear}
+        />
+      </div>
       <table className="w-full text-sm text-left rtl:text-right text-text dark:text-text">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
@@ -38,7 +85,7 @@ export const Table = ({ data }: TableProps) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((item: Consumer) => (
+          {filteredData.map((item: Consumer) => (
             <tr
               key={item.id}
               className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
