@@ -3,54 +3,46 @@ import { RecycleIcon, ZapIcon, DollarSignIcon } from "lucide-react";
 import { Invoice } from "../../schemas";
 import { AriaChart } from "../../components/chart/aria-chart";
 import { BarChart } from "../../components/chart/bar-chart";
-import { useDashboardData } from "../../hooks/useDashboardData";
 import { useInvoicesData } from "../../hooks/useInvoicesData";
 import {
   calculateTotalEconomyGD,
   calculateTotalEnergyConsumption,
+  calculateTotalCompensatedEnergy,
+  calculateTotalValueWithoutGD,
 } from "../../utils/calculations";
 
 const Dashboard = () => {
-  const { data: dashboardData, isLoading: dashboardLoading } =
-    useDashboardData();
   const { data: invoices, isLoading: invoicesLoading } = useInvoicesData();
 
-  if (invoicesLoading || dashboardLoading) return <div>Carregando...</div>;
+  if (invoicesLoading) return <div>Carregando...</div>;
 
-  const totalCompensatedEnergy = dashboardData?.totalCompensatedEnergy || 0;
-  const totalValueWithoutGD =
-    invoices?.reduce(
-      (acc: number, invoice: { totalValue: number }) =>
-        acc + invoice.totalValue,
-      0
-    ) || 0;
+  const totalEnergyConsumption = calculateTotalEnergyConsumption(invoices);
+  const totalCompensatedEnergy = calculateTotalCompensatedEnergy(invoices);
+  const totalValueWithoutGD = calculateTotalValueWithoutGD(invoices);
+  const totalEconomyGD = calculateTotalEconomyGD(invoices);
 
-  const energyChartData = invoices?.map((invoice: Invoice) => ({
+  const energyChartData = invoices.map((invoice: Invoice) => ({
     month: invoice.referenceMonth,
-    consumo: invoice.energyConsumption,
-    compensada: invoice.compensatedEnergy,
+    consumo: invoice.electricityKwh + (invoice.sceeEnergyKwh || 0),
+    compensada: invoice.compensatedEnergyGDIKwh || 0,
   }));
 
-  const financialChartData = invoices?.map((invoice: Invoice) => ({
+  const financialChartData = invoices.map((invoice: Invoice) => ({
     month: invoice.referenceMonth,
     valorSemGD: invoice.totalValue,
-    economiaGD:
-      (invoice.compensatedEnergy * invoice.totalValue) /
-      invoice.energyConsumption,
+    economiaGD: invoice.compensatedEnergyGDIValue || 0,
   }));
 
   const cardsData = [
     {
       icon: ZapIcon,
       title: "Consumo Total",
-      subtitle: `${calculateTotalEnergyConsumption(dashboardData).toFixed(
-        2
-      )} kWh`,
+      subtitle: `${totalEnergyConsumption.toFixed(2)} kWh`,
       color: "bg-secondary",
     },
     {
       icon: RecycleIcon,
-      title: "Compensação Total",
+      title: "Compensação Total",
       subtitle: `${totalCompensatedEnergy.toFixed(2)} kWh`,
       color: "bg-primary",
     },
@@ -63,8 +55,8 @@ const Dashboard = () => {
     {
       icon: DollarSignIcon,
       title: "Economia GD",
-      subtitle: `R$ ${calculateTotalEconomyGD(invoices).toFixed(2)}`,
-      color: "bg-fuchsia-200  ",
+      subtitle: `R$ ${totalEconomyGD.toFixed(2)}`,
+      color: "bg-fuchsia-200",
     },
   ];
 

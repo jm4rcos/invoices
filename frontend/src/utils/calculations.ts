@@ -1,30 +1,29 @@
 import { Invoice } from "../schemas";
 
 export const calculateTotalEnergyConsumption = (
-  dashboardData:
-    | {
-        totalEnergyConsumption: number;
-      }
-    | undefined
-) => {
-  return dashboardData?.totalEnergyConsumption || 0;
+  invoices: Invoice[]
+): number => {
+  return invoices.reduce((total, invoice) => {
+    return total + invoice.electricityKwh + (invoice.sceeEnergyKwh || 0);
+  }, 0);
 };
 
-export const calculateTotalEconomyGD = (invoices: Invoice[]) => {
-  return (
-    invoices?.reduce(
-      (
-        acc: number,
-        invoice: {
-          compensatedEnergy: number;
-          totalValue: number;
-          energyConsumption: number;
-        }
-      ) =>
-        acc +
-        (invoice.compensatedEnergy * invoice.totalValue) /
-          invoice.energyConsumption,
-      0
-    ) || 0
-  );
+export const calculateTotalCompensatedEnergy = (
+  invoices: Invoice[]
+): number => {
+  return invoices.reduce((total, invoice) => {
+    return total + (invoice.compensatedEnergyGDIKwh || 0);
+  }, 0);
+};
+
+export const calculateTotalValueWithoutGD = (invoices: Invoice[]): number => {
+  return invoices.reduce((total, invoice) => {
+    return total + invoice.totalValue;
+  }, 0);
+};
+
+export const calculateTotalEconomyGD = (invoices: Invoice[]): number => {
+  return invoices.reduce((total, invoice) => {
+    return total + (invoice.compensatedEnergyGDIValue || 0);
+  }, 0);
 };

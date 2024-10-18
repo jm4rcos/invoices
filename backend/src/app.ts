@@ -14,7 +14,7 @@ app.use(json());
 
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/consumers", consumerRoutes);
-app.use("api/dashboard", dashboardRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/health", (_, res) => {
   res.status(200).json({ message: "OK" });
 });

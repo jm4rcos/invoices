@@ -15,7 +15,7 @@ app.use((0, cors_1.default)());
 app.use((0, body_parser_1.json)());
 app.use("/api/invoices", invoice_routes_1.default);
 app.use("/api/consumers", consumer_routes_1.default);
-app.use("api/dashboard", dashboard_routes_1.default);
+app.use("/api/dashboard", dashboard_routes_1.default);
 app.use("/api/health", (_, res) => {
     res.status(200).json({ message: "OK" });
 });

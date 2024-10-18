@@ -5,7 +5,7 @@ export type DashboardData = {
   totalCompensatedEnergy: number;
 };
 const fetchDataDashboard = async (): Promise<DashboardData> => {
-  const response = await fetch(`http://localhost:3333/api/invoices/dashboard`);
+  const response = await fetch(`http://localhost:3333/api/dashboard`);
   return response.json();
 };
 
