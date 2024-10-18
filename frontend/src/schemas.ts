@@ -17,4 +17,15 @@ export const invoiceSchema = z.object({
   updatedAt: z.date().optional(),
 });
 
+export const consumerSchema = z.object({
+  id: z.string().optional(),
+  clientNumber: z.string().min(1).max(255),
+  clientName: z.string(),
+  installationNumber: z.string().min(1).max(255),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+  invoices: z.array(invoiceSchema),
+});
+
 export type Invoice = z.infer<typeof invoiceSchema>;
+export type Consumer = z.infer<typeof consumerSchema>;
