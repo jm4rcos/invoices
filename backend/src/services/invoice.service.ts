@@ -1,10 +1,10 @@
 import { Invoice } from "@prisma/client";
-import { Consumer } from "../dtos/consumer.dto";
+import { CreateConsumer } from "../dtos/consumer.dto";
 import { ExtractInvoice } from "../dtos/extract-invoice.dto";
 import { CreateInvoice } from "../dtos/invoice.dto";
-import { ConsumerRepository } from "../repositories/cosumer/consumer.repository";
+import { ConsumerRepository } from "../repositories/consumer/consumer.repository";
 import { InvoiceRepository } from "../repositories/invoice/invoice.repository";
-import { PdfUploadService } from "../utils/pdf-upload.ervice";
+import { PdfUploadService } from "./pdf-upload.service";
 
 const pdfUploadService = new PdfUploadService();
 const invoiceRepository = new InvoiceRepository();
@@ -13,7 +13,7 @@ const consumerRepository = new ConsumerRepository();
 export class InvoiceService {
   async createInvoice(data: ExtractInvoice, pdfBuffer: Buffer) {
     try {
-      const consumerUnitData: Consumer = {
+      const consumerUnitData: CreateConsumer = {
         clientNumber: data.clientNumber,
         clientName: data.clientName,
         installationNumber: data.installationNumber,
@@ -42,12 +42,12 @@ export class InvoiceService {
 
       return invoiceRepository.create(createInvoiceData);
     } catch (error) {
-      console.error("Error creating invoice:", error);
+      console.error("Erro ao criar fatura:", error);
       throw error;
     }
   }
 
-  private async getOrCreateConsumerUnit(consumerUnitData: Consumer) {
+  private async getOrCreateConsumerUnit(consumerUnitData: CreateConsumer) {
     let consumerUnit = await consumerRepository.findFirst({
       clientNumber: consumerUnitData.clientNumber,
     });

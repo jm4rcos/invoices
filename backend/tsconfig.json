@@ -8,6 +8,6 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/dtos/consumer.dto.ts"],
   "exclude": ["node_modules", "dist"]
 }

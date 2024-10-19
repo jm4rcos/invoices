@@ -12,28 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.teardown = exports.setup = void 0;
 const client_1 = require("@prisma/client");
 const app_1 = __importDefault(require("./app"));
+let server;
 const prisma = new client_1.PrismaClient();
-const PORT = process.env.PORT || 3333;
-function startServer() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield prisma.$connect();
-            console.log("Connected to database");
-            app_1.default.listen(PORT, () => {
-                console.log(`Server is running on port ${PORT}`);
-            });
-        }
-        catch (error) {
-            console.error("Failed to start server:", error);
-            yield prisma.$disconnect();
-            process.exit(1);
-        }
-    });
-}
-startServer();
-process.on("SIGINT", () => __awaiter(void 0, void 0, void 0, function* () {
+const setup = () => __awaiter(void 0, void 0, void 0, function* () {
+    yield prisma.$connect();
+    server = app_1.default.listen(3000);
+});
+exports.setup = setup;
+const teardown = () => __awaiter(void 0, void 0, void 0, function* () {
+    server.close();
     yield prisma.$disconnect();
-    process.exit(0);
-}));
+});
+exports.teardown = teardown;

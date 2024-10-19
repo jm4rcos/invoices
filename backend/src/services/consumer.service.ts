@@ -1,4 +1,4 @@
-import { ConsumerRepository } from "../repositories/cosumer/consumer.repository";
+import { ConsumerRepository } from "../repositories/consumer/consumer.repository";
 
 const consumerRepository = new ConsumerRepository();
 
