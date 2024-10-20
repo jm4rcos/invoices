@@ -27,7 +27,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.13",
     "@types/multer": "^1.4.12",
-    "@types/node": "^22.7.6",
+    "@types/node": "^22.7.7",
     "@types/pdf-parse": "^1.1.4",
     "@types/streamifier": "^0.1.2",
     "jest": "^29.7.0",
