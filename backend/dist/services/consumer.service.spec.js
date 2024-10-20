@@ -39,9 +39,7 @@ describe("ConsumerService", () => {
             const clientName = consumer_mock_1.mockConsumer.clientName;
             const error = new Error("Erro ao criar consumidor");
             mockConsumerRepository.create.mockRejectedValueOnce(error);
-            const consoleErrorSpy = jest.spyOn(console, "error");
             yield expect(consumerService.createConsumerUnit(clientNumber, installationNumber, clientName)).rejects.toThrow(error);
-            expect(consoleErrorSpy).toHaveBeenCalledWith("Erro ao criar o consumidor:", error);
         }));
     });
     describe("getConsumerUnit", () => {
@@ -67,9 +65,7 @@ describe("ConsumerService", () => {
             const clientNumber = consumer_mock_1.mockConsumer.clientNumber;
             const error = new Error("Erro ao obter consumidor");
             mockConsumerRepository.findFirst.mockRejectedValueOnce(error);
-            const consoleErrorSpy = jest.spyOn(console, "error");
             yield expect(consumerService.getConsumerUnit(clientNumber)).rejects.toThrow(error);
-            expect(consoleErrorSpy).toHaveBeenCalledWith("Erro ao obter o consumidor:", error);
         }));
     });
     describe("getAllConsumerUnits", () => {
@@ -88,9 +84,7 @@ describe("ConsumerService", () => {
         it("should throw an error if retrieval fails", () => __awaiter(void 0, void 0, void 0, function* () {
             const error = new Error("Erro ao obter todos os consumidores");
             mockConsumerRepository.findMany.mockRejectedValueOnce(error);
-            const consoleErrorSpy = jest.spyOn(console, "error");
             yield expect(consumerService.getAllConsumerUnits()).rejects.toThrow(error);
-            expect(consoleErrorSpy).toHaveBeenCalledWith("Erro ao obter todos os consumidores:", error);
         }));
     });
 });

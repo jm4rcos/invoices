@@ -1,16 +1,27 @@
 import { PrismaClient } from "@prisma/client";
-import { Server } from "http";
 import app from "./app";
 
-let server: Server;
 const prisma = new PrismaClient();
+const PORT = process.env.PORT || 3333;
 
-export const setup = async () => {
-  await prisma.$connect();
-  server = app.listen(3000);
-};
+async function startServer() {
+  try {
+    await prisma.$connect();
+    console.log("Connected to database");
 
-export const teardown = async () => {
-  server.close();
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    await prisma.$disconnect();
+    process.exit(1);
+  }
+}
+
+startServer();
+
+process.on("SIGINT", async () => {
   await prisma.$disconnect();
-};
+  process.exit(0);
+});
