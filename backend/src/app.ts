@@ -9,7 +9,12 @@ import invoiceRoutes from "./routes/invoice.routes";
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: ["https://lumi-invoice-app.vercel.app", "http://localhost:3000"],
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 app.use(json());
 
 app.use("/api/invoices", invoiceRoutes);
