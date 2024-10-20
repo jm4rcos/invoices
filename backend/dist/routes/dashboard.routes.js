@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const client_1 = require("@prisma/client");
+const dashboard_controller_1 = require("../controllers/dashboard.controller");
+const dashboard_service_1 = require("../services/dashboard.service");
+const dashboardRouter = (0, express_1.Router)();
+const prisma = new client_1.PrismaClient();
+const dashboardService = new dashboard_service_1.DashboardService(prisma);
+const dashboardController = new dashboard_controller_1.DashboardController(dashboardService);
+dashboardRouter.get("/", dashboardController.getDashboardData.bind(dashboardController));
+exports.default = dashboardRouter;

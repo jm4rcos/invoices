@@ -1,0 +1,24 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const multer_1 = __importDefault(require("multer"));
+const client_1 = require("@prisma/client");
+const pdf_service_adapter_1 = require("../adapters/pdf-service-adapter");
+const invoice_controller_1 = require("../controllers/invoice.controller");
+const consumer_repository_1 = require("../repositories/consumer/consumer.repository");
+const invoice_repository_1 = require("../repositories/invoice/invoice.repository");
+const invoice_service_1 = require("../services/invoice.service");
+const invoiceRouter = (0, express_1.Router)();
+const upload = (0, multer_1.default)();
+const prisma = new client_1.PrismaClient();
+const pdfServiceAdapter = new pdf_service_adapter_1.PdfServiceAdapter();
+const invoiceRepository = new invoice_repository_1.InvoiceRepository(prisma);
+const consumerRepository = new consumer_repository_1.ConsumerRepository(prisma);
+const invoiceService = new invoice_service_1.InvoiceService(pdfServiceAdapter, invoiceRepository, consumerRepository);
+const invoiceController = new invoice_controller_1.InvoiceController(pdfServiceAdapter, invoiceService);
+invoiceRouter.post("/upload", upload.single("pdf"), invoiceController.uploadInvoice.bind(invoiceController));
+invoiceRouter.get("/", invoiceController.getInvoices.bind(invoiceController));
+exports.default = invoiceRouter;
