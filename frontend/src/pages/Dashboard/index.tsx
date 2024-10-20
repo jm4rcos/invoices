@@ -15,8 +15,6 @@ import Loader from "../../components/loader";
 const Dashboard = () => {
   const { data, isLoading, error } = useInvoicesData();
 
-  if (isLoading) return <div>Carregando...</div>;
-
   const totalEnergyConsumption = calculateTotalEnergyConsumption(data);
   const totalCompensatedEnergy = calculateTotalCompensatedEnergy(data);
   const totalValueWithoutGD = calculateTotalValueWithoutGD(data);
