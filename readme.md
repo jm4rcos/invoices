@@ -1,6 +1,6 @@
 # Lumi App 🌟⚡
 
-![Lumi App](https://via.placeholder.com/800x400?text=Lumi+App)
+![Lumi App](/image/lumi.jpg)
 
 ## Demonstração 🖥️
 
