@@ -8,7 +8,8 @@
     "strict": true,
     "skipLibCheck": true,
     "types": ["node", "jest"],
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "typeRoots": ["node_modules/@types"]
   },
   "include": ["src/**/*", "src/dtos/consumer.dto.ts"],
   "exclude": ["node_modules", "dist"]
