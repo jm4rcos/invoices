@@ -30,7 +30,7 @@ export const Table = ({ data }: TableProps) => {
   return (
     <>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table className="w-full text-sm text-left rtl:text-right text-text dark:text-text">
+        <table className="w-full text-sm text-left rtl:text-right text-title">
           <thead className="text-xs text-text uppercase bg-accent dark:bg-accent dark:text-gray-400">
             <tr>
               <th className="px-6 py-4 font-medium text-title whitespace-nowrap">
@@ -50,7 +50,7 @@ export const Table = ({ data }: TableProps) => {
             {filteredData.map((item: Consumer) => (
               <tr
                 key={item.id}
-                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                className="bg-accent text-title  border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 <td className="px-6 py-4 max-w-[300px] truncate">
                   {item.clientName}
