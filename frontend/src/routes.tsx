@@ -1,6 +1,6 @@
 import { RouteObject } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
-import InvoiceLibrary from "./pages/InvoiceLibrary";
+import Invoices from "./pages/Invoices";
 import Layout from "./components/layout";
 
 export const routes: RouteObject[] = [
@@ -9,7 +9,7 @@ export const routes: RouteObject[] = [
     element: <Layout />,
     children: [
       { path: "/", element: <Dashboard /> },
-      { path: "/invoices", element: <InvoiceLibrary /> },
+      { path: "/invoices", element: <Invoices /> },
     ],
   },
 ];

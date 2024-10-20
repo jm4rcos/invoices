@@ -1,5 +1,5 @@
 import { Card } from "./_components/card";
-import { RecycleIcon, ZapIcon, DollarSignIcon } from "lucide-react";
+import { RecycleIcon, ZapIcon, DollarSignIcon, FrownIcon } from "lucide-react";
 import { Invoice } from "../../schemas";
 import { AriaChart } from "../../components/chart/aria-chart";
 import { BarChart } from "../../components/chart/bar-chart";
@@ -10,24 +10,25 @@ import {
   calculateTotalCompensatedEnergy,
   calculateTotalValueWithoutGD,
 } from "../../utils/calculations";
+import Loader from "../../components/loader";
 
 const Dashboard = () => {
-  const { data: invoices, isLoading: invoicesLoading } = useInvoicesData();
+  const { data, isLoading, error } = useInvoicesData();
 
-  if (invoicesLoading) return <div>Carregando...</div>;
+  if (isLoading) return <div>Carregando...</div>;
 
-  const totalEnergyConsumption = calculateTotalEnergyConsumption(invoices);
-  const totalCompensatedEnergy = calculateTotalCompensatedEnergy(invoices);
-  const totalValueWithoutGD = calculateTotalValueWithoutGD(invoices);
-  const totalEconomyGD = calculateTotalEconomyGD(invoices);
+  const totalEnergyConsumption = calculateTotalEnergyConsumption(data);
+  const totalCompensatedEnergy = calculateTotalCompensatedEnergy(data);
+  const totalValueWithoutGD = calculateTotalValueWithoutGD(data);
+  const totalEconomyGD = calculateTotalEconomyGD(data);
 
-  const energyChartData = invoices.map((invoice: Invoice) => ({
+  const energyChartData = data.map((invoice: Invoice) => ({
     month: invoice.referenceMonth,
     consumo: invoice.electricityKwh + (invoice.sceeEnergyKwh || 0),
     compensada: invoice.compensatedEnergyGDIKwh || 0,
   }));
 
-  const financialChartData = invoices.map((invoice: Invoice) => ({
+  const financialChartData = data.map((invoice: Invoice) => ({
     month: invoice.referenceMonth,
     valorSemGD: invoice.totalValue,
     economiaGD: invoice.compensatedEnergyGDIValue || 0,
@@ -59,6 +60,28 @@ const Dashboard = () => {
       color: "bg-fuchsia-200",
     },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="h-full w-full flex gap-4 items-center justify-center">
+        <Loader />
+        Carregando...
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="h-full w-full flex text-title gap-4 items-center justify-center">
+        Nenhum dado encontrado!{" "}
+        <FrownIcon className="w-8 h-8 text-rose-400 ml-2" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div>Erro ao carregar dados: {error.message}</div>;
+  }
 
   return (
     <div className="h-full w-full space-y-4 pb-4">

@@ -1,33 +1,22 @@
 import { FileTextIcon, XIcon } from "lucide-react";
-import { Consumer } from "../../schemas";
+
 import { Tootilip } from "../tooltip";
+import { Consumer } from "../../schemas";
 import { useSearchParams } from "react-router-dom";
-import { Input } from "../input";
+import { months } from "../../utils/months";
 
 interface TableProps {
   data: Consumer[];
 }
 
 export const Table = ({ data }: TableProps) => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const clientNumberFilter = searchParams.get("clientNumber") || "";
   const yearFilter = parseInt(
     searchParams.get("year") || new Date().getFullYear().toString(),
     10
   );
-
-  const months = [
-    "Jan",
-    "Fev",
-    "Mar",
-    "Abr",
-    "Mai",
-    "Jun",
-    "Jul",
-    "Ago",
-    "Set",
-  ];
 
   const filteredData = data.filter((item) => {
     const clientNumberMatch = item.clientNumber.includes(clientNumberFilter);
@@ -38,36 +27,8 @@ export const Table = ({ data }: TableProps) => {
     return clientNumberMatch && yearMatch;
   });
 
-  const handleFilterByYear = (value: string | number) => {
-    const convertedValue = Number(value);
-    setSearchParams({
-      ...Object.fromEntries(searchParams),
-      year: convertedValue.toString(),
-    });
-  };
-
-  const handleFilterByClientNumber = (value: string | number) => {
-    setSearchParams({
-      ...Object.fromEntries(searchParams),
-      clientNumber: value.toString(),
-    });
-  };
-
   return (
     <>
-      <div className="py-4 space-x-4">
-        <Input
-          placeholder="Nº do cliente"
-          value={clientNumberFilter}
-          onChange={handleFilterByClientNumber}
-        />
-        <Input
-          type="number"
-          placeholder="Filtrar por ano"
-          value={yearFilter}
-          onChange={handleFilterByYear}
-        />
-      </div>
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-text dark:text-text">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
