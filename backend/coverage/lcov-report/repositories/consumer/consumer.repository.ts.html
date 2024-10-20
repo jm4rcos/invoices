@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>7/7</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>7/7</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
@@ -88,29 +88,14 @@
 <a name='L23'></a><a href='#L23'>23</a>
 <a name='L24'></a><a href='#L24'>24</a>
 <a name='L25'></a><a href='#L25'>25</a>
-<a name='L26'></a><a href='#L26'>26</a>
-<a name='L27'></a><a href='#L27'>27</a>
-<a name='L28'></a><a href='#L28'>28</a>
-<a name='L29'></a><a href='#L29'>29</a>
-<a name='L30'></a><a href='#L30'>30</a>
-<a name='L31'></a><a href='#L31'>31</a>
-<a name='L32'></a><a href='#L32'>32</a>
-<a name='L33'></a><a href='#L33'>33</a>
-<a name='L34'></a><a href='#L34'>34</a>
-<a name='L35'></a><a href='#L35'>35</a>
-<a name='L36'></a><a href='#L36'>36</a>
-<a name='L37'></a><a href='#L37'>37</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">3x</span>
+<a name='L26'></a><a href='#L26'>26</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -119,56 +104,38 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { ConsumerUnit, PrismaClient } from "@prisma/client";
 import { CreateConsumer } from "../../dtos/consumer.dto";
 &nbsp;
-const prisma = new PrismaClient();
-&nbsp;
-type ConsumerUnitWhereUniqueInput = {
-  id?: string;
-  clientNumber?: string;
-  installationNumber?: string;
-};
-&nbsp;
 export class ConsumerRepository {
-  async findFirst(
-    where: ConsumerUnitWhereUniqueInput
-  ): Promise&lt;ConsumerUnit | null&gt; {
-    return prisma.consumerUnit.findFirst({ where });
+  constructor(private prisma: PrismaClient) {}
+&nbsp;
+  async findFirst(where: {
+    id?: string;
+    clientNumber?: string;
+    installationNumber?: string;
+  }): Promise&lt;ConsumerUnit | null&gt; {
+    return this.prisma.consumerUnit.findFirst({ where });
   }
 &nbsp;
   async findMany(where?: Partial&lt;ConsumerUnit&gt;): Promise&lt;ConsumerUnit[]&gt; {
-    return prisma.consumerUnit.findMany({ where, include: { invoices: true } });
+    return this.prisma.consumerUnit.findMany({
+      where,
+      include: { invoices: true },
+    });
   }
 &nbsp;
   async create(data: CreateConsumer): Promise&lt;ConsumerUnit&gt; {
-    return prisma.consumerUnit.create({ data });
-  }
-&nbsp;
-  async update(
-    where: {
-      id: string;
-      clientNumber?: string;
-    },
-    data: Partial&lt;ConsumerUnit&gt;
-  ): Promise&lt;ConsumerUnit | null&gt; {
-    return prisma.consumerUnit.update({ where, data });
+    return this.prisma.consumerUnit.create({ data });
   }
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -178,7 +145,7 @@ export class ConsumerRepository {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-10-19T19:12:45.776Z
+                at 2024-10-20T00:01:24.054Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

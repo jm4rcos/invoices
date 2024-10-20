@@ -1,26 +1,21 @@
-import { PrismaClient } from "@prisma/client";
+import { Invoice, PrismaClient } from "@prisma/client";
 import { mockDeep, mockReset } from "jest-mock-extended";
 import {
   mockCreateInvoice,
   mockInvoice,
-} from "../../dtos/__mock__/invoice.mock";
-import { InvoiceRepository } from "./invoice.repository";
+} from "../../dtos/__mocks__/invoice.mock";
+import { InvoiceRepository } from "../invoice/invoice.repository";
 
-const mockPrisma = (() => {
-  const mockPrisma = mockDeep<PrismaClient>();
-  jest.mock("@prisma/client", () => ({
-    PrismaClient: jest.fn().mockImplementation(() => mockPrisma),
-  }));
-  return mockPrisma;
-})();
+const mockPrisma = mockDeep<PrismaClient>();
+
+const mockWhere = { consumerUnitId: "1", referenceMonth: "JAN/2023" };
 
 describe("InvoiceRepository", () => {
   let invoiceRepository: InvoiceRepository;
-  const mockWhere = { consumerUnitId: "1", referenceMonth: "JAN/2023" };
 
   beforeEach(() => {
     mockReset(mockPrisma);
-    invoiceRepository = new InvoiceRepository();
+    invoiceRepository = new InvoiceRepository(mockPrisma);
   });
 
   describe("findFirst", () => {
@@ -49,30 +44,26 @@ describe("InvoiceRepository", () => {
 
   describe("findMany", () => {
     it("should return all invoices that match the query", async () => {
-      const mockInvoices = [mockInvoice];
+      const mockInvoices: Invoice[] = [mockInvoice];
 
       mockPrisma.invoice.findMany.mockResolvedValue(mockInvoices);
 
-      const result = await invoiceRepository.findMany({
-        consumerUnitId: "1",
-      });
+      const result = await invoiceRepository.findMany(mockWhere);
 
       expect(result).toEqual(mockInvoices);
       expect(mockPrisma.invoice.findMany).toHaveBeenCalledWith({
-        where: { consumerUnitId: "1" },
+        where: mockWhere,
       });
     });
 
     it("should return an empty array if no invoices match the query", async () => {
       mockPrisma.invoice.findMany.mockResolvedValue([]);
 
-      const result = await invoiceRepository.findMany({
-        consumerUnitId: "1",
-      });
+      const result = await invoiceRepository.findMany(mockWhere);
 
       expect(result).toEqual([]);
       expect(mockPrisma.invoice.findMany).toHaveBeenCalledWith({
-        where: { consumerUnitId: "1" },
+        where: mockWhere,
       });
     });
   });

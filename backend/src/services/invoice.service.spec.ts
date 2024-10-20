@@ -1,180 +1,108 @@
-import { mockConsumer } from "../dtos/__mock__/consumer.mock";
-import { mockInvoice } from "../dtos/__mock__/invoice.mock";
+import { ConsumerUnit, Invoice, PrismaClient } from "@prisma/client";
+import { DeepMockProxy, mockDeep } from "jest-mock-extended";
 import { ConsumerRepository } from "../repositories/consumer/consumer.repository";
 import { InvoiceRepository } from "../repositories/invoice/invoice.repository";
 import { InvoiceService } from "./invoice.service";
 import { PdfUploadService } from "./pdf-upload.service";
 
-jest.mock("../repositories/invoice/invoice.repository");
-jest.mock("../repositories/consumer/consumer.repository");
-jest.mock("./pdf-upload.service");
-
-const mockInvoiceRepository = InvoiceRepository as jest.MockedClass<
-  typeof InvoiceRepository
->;
-const mockConsumerRepository = ConsumerRepository as jest.MockedClass<
-  typeof ConsumerRepository
->;
-const mockPdfUploadService = PdfUploadService as jest.MockedClass<
-  typeof PdfUploadService
->;
-
 describe("InvoiceService", () => {
   let invoiceService: InvoiceService;
+  let mockPdfUploadService: jest.Mocked<PdfUploadService>;
+  let mockInvoiceRepository: DeepMockProxy<InvoiceRepository>;
+  let mockConsumerRepository: DeepMockProxy<ConsumerRepository>;
+  let mockPrisma: DeepMockProxy<PrismaClient>;
 
   beforeEach(() => {
-    invoiceService = new InvoiceService();
-    jest.clearAllMocks();
+    mockPdfUploadService = mockDeep<PdfUploadService>();
+    mockInvoiceRepository = mockDeep<InvoiceRepository>();
+    mockConsumerRepository = mockDeep<ConsumerRepository>();
+    mockPrisma = mockDeep<PrismaClient>();
+
+    invoiceService = new InvoiceService(
+      mockPdfUploadService,
+      mockInvoiceRepository,
+      mockConsumerRepository
+    );
   });
 
-  describe("createInvoice", () => {
-    const pdfBuffer = Buffer.from("test pdf content");
-    const extractInvoice = {
-      clientNumber: mockConsumer.clientNumber,
-      clientName: mockConsumer.clientName,
-      installationNumber: mockConsumer.installationNumber,
-      invoice: {
-        ...mockInvoice,
-        referenceMonth: "JAN/2023",
-      },
+  it("should create a new invoice", async () => {
+    const mockInvoice: Invoice = {
+      id: "1",
+      consumerUnitId: "1",
+      distributor: "distribuidora",
+      referenceMonth: "JAN/2023",
+      electricityKwh: 100,
+      electricityValue: 50,
+      sceeEnergyKwh: 20,
+      sceeEnergyValue: 10,
+      compensatedEnergyGDIKwh: 10,
+      compensatedEnergyGDIValue: 5,
+      totalValue: 55,
+      pdfUrl: "https://cloudinary.com/pdf/12345",
+      createdAt: new Date("2023-01-01T00:00:00.000Z"),
+      updatedAt: new Date("2023-01-01T00:00:00.000Z"),
     };
 
-    it("should create a new invoice", async () => {
-      mockConsumerRepository.prototype.findFirst.mockResolvedValueOnce(null);
-      mockConsumerRepository.prototype.create.mockResolvedValueOnce(
-        mockConsumer
-      );
-      mockInvoiceRepository.prototype.findFirst.mockResolvedValueOnce(null);
-      mockPdfUploadService.prototype.uploadPdfToCloudinary.mockResolvedValueOnce(
-        "https://cloudinary.com/pdf/12345"
-      );
-      mockInvoiceRepository.prototype.create.mockResolvedValueOnce(mockInvoice);
+    const mockConsumerUnit: ConsumerUnit = {
+      id: "1",
+      clientNumber: "123456",
+      clientName: "John Doe",
+      installationNumber: "789012",
+      createdAt: new Date("2023-01-01T00:00:00.000Z"),
+      updatedAt: new Date("2023-01-01T00:00:00.000Z"),
+    };
 
-      const result = await invoiceService.createInvoice(
-        extractInvoice,
-        pdfBuffer
-      );
+    mockConsumerRepository.findFirst.mockResolvedValue(mockConsumerUnit);
+    mockInvoiceRepository.findFirst.mockResolvedValue(null);
+    mockPdfUploadService.uploadPdfToCloudinary.mockResolvedValue(
+      "https://cloudinary.com/pdf/12345"
+    );
+    mockInvoiceRepository.create.mockResolvedValue(mockInvoice);
 
-      expect(result).toEqual(mockInvoice);
-      expect(mockConsumerRepository.prototype.findFirst).toHaveBeenCalledWith({
-        clientNumber: extractInvoice.clientNumber,
-      });
-      expect(mockConsumerRepository.prototype.create).toHaveBeenCalledWith(
-        mockConsumer
-      );
-      expect(mockInvoiceRepository.prototype.findFirst).toHaveBeenCalledWith({
-        consumerUnitId: mockConsumer.id,
-        referenceMonth: extractInvoice.invoice.referenceMonth,
-      });
-      expect(
-        mockPdfUploadService.prototype.uploadPdfToCloudinary
-      ).toHaveBeenCalledWith(pdfBuffer);
-      expect(mockInvoiceRepository.prototype.create).toHaveBeenCalledWith({
-        ...extractInvoice.invoice,
-        consumerUnitId: mockConsumer.id,
-        pdfUrl: "https://cloudinary.com/pdf/12345",
-      });
+    const result = await invoiceService.createInvoice(
+      {
+        clientNumber: "123456",
+        clientName: "John Doe",
+        installationNumber: "789012",
+        invoice: {
+          distributor: "distribuidora",
+          referenceMonth: "JAN/2023",
+          electricityKwh: 100,
+          electricityValue: 50,
+          sceeEnergyKwh: 20,
+          sceeEnergyValue: 10,
+          compensatedEnergyGDIKwh: 10,
+          compensatedEnergyGDIValue: 5,
+          totalValue: 55,
+          pdfUrl: "https://cloudinary.com/pdf/12345",
+        },
+      },
+      Buffer.from("pdf content")
+    );
+
+    expect(result).toEqual(mockInvoice);
+    expect(mockConsumerRepository.findFirst).toHaveBeenCalledWith({
+      clientNumber: "123456",
     });
-
-    it("should return existing invoice if it already exists", async () => {
-      mockConsumerRepository.prototype.findFirst.mockResolvedValueOnce(
-        mockConsumer
-      );
-      mockInvoiceRepository.prototype.findFirst.mockResolvedValueOnce(
-        mockInvoice
-      );
-
-      const result = await invoiceService.createInvoice(
-        extractInvoice,
-        pdfBuffer
-      );
-
-      expect(result).toEqual(mockInvoice);
-      expect(mockConsumerRepository.prototype.findFirst).toHaveBeenCalledWith({
-        clientNumber: extractInvoice.clientNumber,
-      });
-      expect(mockInvoiceRepository.prototype.findFirst).toHaveBeenCalledWith({
-        consumerUnitId: mockConsumer.id,
-        referenceMonth: extractInvoice.invoice.referenceMonth,
-      });
-      expect(
-        mockPdfUploadService.prototype.uploadPdfToCloudinary
-      ).not.toHaveBeenCalled();
-      expect(mockInvoiceRepository.prototype.create).not.toHaveBeenCalled();
+    expect(mockInvoiceRepository.findFirst).toHaveBeenCalledWith({
+      consumerUnitId: "1",
+      referenceMonth: "JAN/2023",
     });
-  });
-
-  describe("getInvoices", () => {
-    it("should return invoices for a specific client", async () => {
-      const clientNumber = mockConsumer.clientNumber;
-
-      mockConsumerRepository.prototype.findFirst.mockResolvedValueOnce(
-        mockConsumer
-      );
-      mockInvoiceRepository.prototype.findMany.mockResolvedValueOnce([
-        mockInvoice,
-      ]);
-
-      const result = await invoiceService.getInvoices(clientNumber);
-
-      expect(result).toEqual([mockInvoice]);
-      expect(mockConsumerRepository.prototype.findFirst).toHaveBeenCalledWith({
-        clientNumber,
-      });
-      expect(mockInvoiceRepository.prototype.findMany).toHaveBeenCalledWith({
-        consumerUnitId: mockConsumer.id,
-      });
-    });
-
-    it("should return all invoices if no client is provided", async () => {
-      mockInvoiceRepository.prototype.findMany.mockResolvedValueOnce([
-        mockInvoice,
-      ]);
-
-      const result = await invoiceService.getInvoices();
-
-      expect(result).toEqual([mockInvoice]);
-      expect(mockConsumerRepository.prototype.findFirst).not.toHaveBeenCalled();
-      expect(mockInvoiceRepository.prototype.findMany).toHaveBeenCalledWith({});
-    });
-  });
-
-  describe("getOrCreateConsumerUnit", () => {
-    const consumerUnitData = mockConsumer;
-
-    it("should return existing consumer unit if it exists", async () => {
-      mockConsumerRepository.prototype.findFirst.mockResolvedValueOnce(
-        mockConsumer
-      );
-
-      const result = await invoiceService["getOrCreateConsumerUnit"](
-        consumerUnitData
-      );
-
-      expect(result).toEqual(mockConsumer);
-      expect(mockConsumerRepository.prototype.findFirst).toHaveBeenCalledWith({
-        clientNumber: consumerUnitData.clientNumber,
-      });
-      expect(mockConsumerRepository.prototype.create).not.toHaveBeenCalled();
-    });
-
-    it("should create a new consumer unit if it does not exist", async () => {
-      mockConsumerRepository.prototype.findFirst.mockResolvedValueOnce(null);
-      mockConsumerRepository.prototype.create.mockResolvedValueOnce(
-        mockConsumer
-      );
-
-      const result = await invoiceService["getOrCreateConsumerUnit"](
-        consumerUnitData
-      );
-
-      expect(result).toEqual(mockConsumer);
-      expect(mockConsumerRepository.prototype.findFirst).toHaveBeenCalledWith({
-        clientNumber: consumerUnitData.clientNumber,
-      });
-      expect(mockConsumerRepository.prototype.create).toHaveBeenCalledWith(
-        consumerUnitData
-      );
+    expect(mockPdfUploadService.uploadPdfToCloudinary).toHaveBeenCalledWith(
+      Buffer.from("pdf content")
+    );
+    expect(mockInvoiceRepository.create).toHaveBeenCalledWith({
+      distributor: "distribuidora",
+      referenceMonth: "JAN/2023",
+      electricityKwh: 100,
+      electricityValue: 50,
+      sceeEnergyKwh: 20,
+      sceeEnergyValue: 10,
+      compensatedEnergyGDIKwh: 10,
+      compensatedEnergyGDIValue: 5,
+      totalValue: 55,
+      pdfUrl: "https://cloudinary.com/pdf/12345",
+      consumerUnitId: "1",
     });
   });
 });

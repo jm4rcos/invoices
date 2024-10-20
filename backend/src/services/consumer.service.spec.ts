@@ -1,29 +1,16 @@
-import { mockConsumer } from "../dtos/__mock__/consumer.mock";
+import { mockDeep, mockReset } from "jest-mock-extended";
+import { mockConsumer } from "../dtos/__mocks__/consumer.mock";
 import { ConsumerRepository } from "../repositories/consumer/consumer.repository";
 import { ConsumerService } from "./consumer.service";
 
-jest.mock("../repositories/consumer/consumer.repository");
-jest.mock("@prisma/client", () => ({
-  PrismaClient: jest.fn().mockImplementation(() => ({
-    consumer: {
-      create: jest.fn(),
-      findFirst: jest.fn(),
-      update: jest.fn(),
-      findMany: jest.fn(),
-    },
-  })),
-}));
-
-const mockConsumerRepository = ConsumerRepository as jest.MockedClass<
-  typeof ConsumerRepository
->;
+const mockConsumerRepository = mockDeep<ConsumerRepository>();
 
 describe("ConsumerService", () => {
   let consumerService: ConsumerService;
 
   beforeEach(() => {
-    consumerService = new ConsumerService();
-    jest.clearAllMocks();
+    mockReset(mockConsumerRepository);
+    consumerService = new ConsumerService(mockConsumerRepository);
   });
 
   describe("createConsumerUnit", () => {
@@ -32,9 +19,7 @@ describe("ConsumerService", () => {
       const installationNumber = mockConsumer.installationNumber;
       const clientName = mockConsumer.clientName;
 
-      mockConsumerRepository.prototype.create.mockResolvedValueOnce(
-        mockConsumer
-      );
+      mockConsumerRepository.create.mockResolvedValueOnce(mockConsumer);
 
       const result = await consumerService.createConsumerUnit(
         clientNumber,
@@ -43,7 +28,7 @@ describe("ConsumerService", () => {
       );
 
       expect(result).toEqual(mockConsumer);
-      expect(mockConsumerRepository.prototype.create).toHaveBeenCalledWith({
+      expect(mockConsumerRepository.create).toHaveBeenCalledWith({
         clientNumber,
         installationNumber,
         clientName,
@@ -56,7 +41,7 @@ describe("ConsumerService", () => {
       const clientName = mockConsumer.clientName;
 
       const error = new Error("Erro ao criar consumidor");
-      mockConsumerRepository.prototype.create.mockRejectedValueOnce(error);
+      mockConsumerRepository.create.mockRejectedValueOnce(error);
 
       await expect(
         consumerService.createConsumerUnit(
@@ -72,14 +57,12 @@ describe("ConsumerService", () => {
     it("should return an existing consumer unit", async () => {
       const clientNumber = mockConsumer.clientNumber;
 
-      mockConsumerRepository.prototype.findFirst.mockResolvedValueOnce(
-        mockConsumer
-      );
+      mockConsumerRepository.findFirst.mockResolvedValueOnce(mockConsumer);
 
       const result = await consumerService.getConsumerUnit(clientNumber);
 
       expect(result).toEqual(mockConsumer);
-      expect(mockConsumerRepository.prototype.findFirst).toHaveBeenCalledWith({
+      expect(mockConsumerRepository.findFirst).toHaveBeenCalledWith({
         clientNumber,
       });
     });
@@ -87,21 +70,20 @@ describe("ConsumerService", () => {
     it("should return null if consumer unit does not exist", async () => {
       const clientNumber = mockConsumer.clientNumber;
 
-      mockConsumerRepository.prototype.findFirst.mockResolvedValueOnce(null);
+      mockConsumerRepository.findFirst.mockResolvedValueOnce(null);
 
       const result = await consumerService.getConsumerUnit(clientNumber);
 
       expect(result).toBeNull();
-      expect(mockConsumerRepository.prototype.findFirst).toHaveBeenCalledWith({
+      expect(mockConsumerRepository.findFirst).toHaveBeenCalledWith({
         clientNumber,
       });
     });
 
     it("should throw an error if retrieval fails", async () => {
       const clientNumber = mockConsumer.clientNumber;
-
-      const error = new Error("Failed to get consumer unit");
-      mockConsumerRepository.prototype.findFirst.mockRejectedValueOnce(error);
+      const error = new Error("Erro ao obter consumidor");
+      mockConsumerRepository.findFirst.mockRejectedValueOnce(error);
 
       await expect(
         consumerService.getConsumerUnit(clientNumber)
@@ -111,28 +93,26 @@ describe("ConsumerService", () => {
 
   describe("getAllConsumerUnits", () => {
     it("should return all consumer units", async () => {
-      mockConsumerRepository.prototype.findMany.mockResolvedValueOnce([
-        mockConsumer,
-      ]);
+      mockConsumerRepository.findMany.mockResolvedValueOnce([mockConsumer]);
 
       const result = await consumerService.getAllConsumerUnits();
 
       expect(result).toEqual([mockConsumer]);
-      expect(mockConsumerRepository.prototype.findMany).toHaveBeenCalledWith();
+      expect(mockConsumerRepository.findMany).toHaveBeenCalledWith();
     });
 
     it("should return an empty array if no consumer units exist", async () => {
-      mockConsumerRepository.prototype.findMany.mockResolvedValueOnce([]);
+      mockConsumerRepository.findMany.mockResolvedValueOnce([]);
 
       const result = await consumerService.getAllConsumerUnits();
 
       expect(result).toEqual([]);
-      expect(mockConsumerRepository.prototype.findMany).toHaveBeenCalledWith();
+      expect(mockConsumerRepository.findMany).toHaveBeenCalledWith();
     });
 
     it("should throw an error if retrieval fails", async () => {
-      const error = new Error("Failed to get all consumer units");
-      mockConsumerRepository.prototype.findMany.mockRejectedValueOnce(error);
+      const error = new Error("Erro ao obter todos os consumidores");
+      mockConsumerRepository.findMany.mockRejectedValueOnce(error);
 
       await expect(consumerService.getAllConsumerUnits()).rejects.toThrow(
         error

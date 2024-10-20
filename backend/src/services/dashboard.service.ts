@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
-
 export class DashboardService {
+  constructor(private prisma: PrismaClient) {}
+
   async getDashboardData() {
-    const invoices = await prisma.invoice.findMany();
+    const invoices = await this.prisma.invoice.findMany();
 
     const totalEnergyConsumption = invoices.reduce(
       (acc, invoice) => acc + invoice.electricityKwh + invoice.sceeEnergyKwh,

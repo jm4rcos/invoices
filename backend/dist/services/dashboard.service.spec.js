@@ -9,52 +9,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const client_1 = require("@prisma/client");
-const dashboard_service_1 = require("../../services/dashboard.service");
-jest.mock("@prisma/client", () => ({
-    PrismaClient: jest.fn().mockImplementation(() => ({
-        invoice: {
-            findMany: jest.fn(),
-        },
-    })),
-}));
+const jest_mock_extended_1 = require("jest-mock-extended");
+const invoice_mock_1 = require("../dtos/__mocks__/invoice.mock");
+const dashboard_service_1 = require("./dashboard.service");
+const mockPrisma = (0, jest_mock_extended_1.mockDeep)();
 describe("DashboardService", () => {
     let dashboardService;
-    let prismaClientMock;
     beforeEach(() => {
-        prismaClientMock = new client_1.PrismaClient();
-        dashboardService = new dashboard_service_1.DashboardService();
+        (0, jest_mock_extended_1.mockReset)(mockPrisma);
+        dashboardService = new dashboard_service_1.DashboardService(mockPrisma);
     });
     it("should calculate dashboard data correctly", () => __awaiter(void 0, void 0, void 0, function* () {
-        const mockInvoices = [
-            {
-                id: "1",
-                electricityKwh: 100,
-                electricityValue: 50,
-                sceeEnergyKwh: 50,
-                sceeEnergyValue: 25,
-                compensatedEnergyGDIKwh: 30,
-                compensatedEnergyGDIValue: 15,
-            },
-            {
-                id: "2",
-                electricityKwh: 200,
-                electricityValue: 100,
-                sceeEnergyKwh: 100,
-                sceeEnergyValue: 50,
-                compensatedEnergyGDIKwh: 60,
-                compensatedEnergyGDIValue: 30,
-            },
-        ];
-        prismaClientMock.invoice.findMany.mockResolvedValue(mockInvoices);
+        mockPrisma.invoice.findMany.mockResolvedValue([invoice_mock_1.mockInvoice]);
         const result = yield dashboardService.getDashboardData();
-        expect(result).toEqual({
-            totalEnergyConsumption: 450,
-            totalCompensatedEnergy: 90,
-            totalValueWithoutGD: 225,
-            totalEconomyGD: 45,
-            invoices: mockInvoices,
-        });
-        expect(prismaClientMock.invoice.findMany).toHaveBeenCalledTimes(1);
+        expect(result.totalEnergyConsumption).toEqual(120);
+        expect(result.totalCompensatedEnergy).toEqual(10);
+        expect(result.totalValueWithoutGD).toEqual(60);
+        expect(result.totalEconomyGD).toEqual(5);
+        expect(result.invoices).toEqual([invoice_mock_1.mockInvoice]);
+        expect(mockPrisma.invoice.findMany).toHaveBeenCalled();
     }));
 });

@@ -9,25 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InvoiceRepository = void 0;
-class InvoiceRepository {
-    constructor(prisma) {
-        this.prisma = prisma;
+exports.PdfServiceAdapter = void 0;
+const pdf_service_1 = require("../services/pdf.service");
+class PdfServiceAdapter extends pdf_service_1.PdfService {
+    constructor() {
+        super();
     }
-    findFirst(where) {
+    uploadPdfToCloudinary(pdfBuffer) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.prisma.invoice.findFirst({ where });
-        });
-    }
-    findMany(where) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.prisma.invoice.findMany({ where });
-        });
-    }
-    create(data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return this.prisma.invoice.create({ data });
+            const extractedData = yield this.extractDataFromPDF(pdfBuffer);
+            return `https://placeholder-url.com/${extractedData.clientNumber}.pdf`;
         });
     }
 }
-exports.InvoiceRepository = InvoiceRepository;
+exports.PdfServiceAdapter = PdfServiceAdapter;

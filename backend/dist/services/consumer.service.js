@@ -10,20 +10,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConsumerService = void 0;
-const consumer_repository_1 = require("../repositories/cosumer/consumer.repository");
-const consumerRepository = new consumer_repository_1.ConsumerRepository();
 class ConsumerService {
+    constructor(consumerRepository) {
+        this.consumerRepository = consumerRepository;
+    }
     createConsumerUnit(clientNumber, installationNumber, clientName) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return consumerRepository.create({
+                return this.consumerRepository.create({
                     clientNumber,
                     installationNumber,
                     clientName,
                 });
             }
             catch (error) {
-                console.error("Error creating consumer unit:", error);
+                console.error("Erro ao criar o consumidor:", error);
                 throw error;
             }
         });
@@ -31,12 +32,12 @@ class ConsumerService {
     getConsumerUnit(clientNumber) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return consumerRepository.findFirst({
+                return this.consumerRepository.findFirst({
                     clientNumber,
                 });
             }
             catch (error) {
-                console.error("Error getting consumer unit:", error);
+                console.error("Erro ao obter o consumidor:", error);
                 throw error;
             }
         });
@@ -44,10 +45,10 @@ class ConsumerService {
     getAllConsumerUnits() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return consumerRepository.findMany();
+                return this.consumerRepository.findMany();
             }
             catch (error) {
-                console.error("Error getting all consumer units:", error);
+                console.error("Erro ao obter todos os consumidores:", error);
                 throw error;
             }
         });

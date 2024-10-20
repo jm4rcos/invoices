@@ -6,12 +6,17 @@ import { ConsumerRepository } from "../repositories/consumer/consumer.repository
 import { InvoiceRepository } from "../repositories/invoice/invoice.repository";
 import { PdfUploadService } from "./pdf-upload.service";
 
-const pdfUploadService = new PdfUploadService();
-const invoiceRepository = new InvoiceRepository();
-const consumerRepository = new ConsumerRepository();
-
 export class InvoiceService {
-  async createInvoice(data: ExtractInvoice, pdfBuffer: Buffer) {
+  constructor(
+    private pdfUploadService: PdfUploadService,
+    private invoiceRepository: InvoiceRepository,
+    private consumerRepository: ConsumerRepository
+  ) {}
+
+  async createInvoice(
+    data: ExtractInvoice,
+    pdfBuffer: Buffer
+  ): Promise<Invoice> {
     try {
       const consumerUnitData: CreateConsumer = {
         clientNumber: data.clientNumber,
@@ -25,14 +30,16 @@ export class InvoiceService {
         referenceMonth: data.invoice.referenceMonth,
       };
 
-      const existingInvoice = await invoiceRepository.findFirst(where);
+      const existingInvoice = await this.invoiceRepository.findFirst(where);
 
       if (existingInvoice) {
         console.log("Esta fatura ja existe!");
         return existingInvoice;
       }
 
-      const pdfUrl = await pdfUploadService.uploadPdfToCloudinary(pdfBuffer);
+      const pdfUrl = await this.pdfUploadService.uploadPdfToCloudinary(
+        pdfBuffer
+      );
       data.invoice.pdfUrl = pdfUrl;
 
       const createInvoiceData: CreateInvoice = {
@@ -40,7 +47,7 @@ export class InvoiceService {
         consumerUnitId: consumerUnit.id,
       };
 
-      return invoiceRepository.create(createInvoiceData);
+      return this.invoiceRepository.create(createInvoiceData);
     } catch (error) {
       console.error("Erro ao criar fatura:", error);
       throw error;
@@ -48,12 +55,12 @@ export class InvoiceService {
   }
 
   private async getOrCreateConsumerUnit(consumerUnitData: CreateConsumer) {
-    let consumerUnit = await consumerRepository.findFirst({
+    let consumerUnit = await this.consumerRepository.findFirst({
       clientNumber: consumerUnitData.clientNumber,
     });
 
     if (!consumerUnit) {
-      consumerUnit = await consumerRepository.create({
+      consumerUnit = await this.consumerRepository.create({
         ...consumerUnitData,
       });
     }
@@ -64,7 +71,7 @@ export class InvoiceService {
   async getInvoices(clientNumber?: string, month?: string) {
     const where: Partial<Invoice> = {};
     if (clientNumber) {
-      const consumerUnit = await consumerRepository.findFirst({
+      const consumerUnit = await this.consumerRepository.findFirst({
         clientNumber,
       });
 
@@ -74,6 +81,6 @@ export class InvoiceService {
     }
     if (month) where.referenceMonth = month;
 
-    return invoiceRepository.findMany(where);
+    return this.invoiceRepository.findMany(where);
   }
 }

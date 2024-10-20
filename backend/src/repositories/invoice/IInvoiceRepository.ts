@@ -7,12 +7,8 @@ export interface IInvoiceRepository {
     consumerUnitId?: string;
     referenceMonth?: string;
   }): Promise<Invoice | null>;
+
   findMany(where?: Partial<Invoice>): Promise<Invoice[]>;
+
   create(data: CreateInvoice): Promise<Invoice>;
-  update(
-    where: {
-      id: string;
-    },
-    data: Partial<Invoice>
-  ): Promise<Invoice>;
 }

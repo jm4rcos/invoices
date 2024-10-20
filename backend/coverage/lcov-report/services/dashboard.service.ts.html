@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">38.46% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>5/13</span>
+                <span class='fraction'>12/12</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">20% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/5</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">38.46% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>5/13</span>
+                <span class='fraction'>12/12</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -101,36 +101,36 @@
 <a name='L36'></a><a href='#L36'>36</a>
 <a name='L37'></a><a href='#L37'>37</a>
 <a name='L38'></a><a href='#L38'>38</a>
-<a name='L39'></a><a href='#L39'>39</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L39'></a><a href='#L39'>39</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -141,34 +141,34 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { PrismaClient } from "@prisma/client";
 &nbsp;
-const prisma = new PrismaClient();
-&nbsp;
 export class DashboardService {
+  constructor(private prisma: PrismaClient) {}
+&nbsp;
   async getDashboardData() {
-    const invoices = await prisma.invoice.findMany();
+    const invoices = await this.prisma.invoice.findMany();
 &nbsp;
     const totalEnergyConsumption = invoices.reduce(
-<span class="fstat-no" title="function not covered" >      (a</span>cc, invoice) =&gt; <span class="cstat-no" title="statement not covered" >acc + invoice.electricityKwh + invoice.sceeEnergyKwh,</span>
+      (acc, invoice) =&gt; acc + invoice.electricityKwh + invoice.sceeEnergyKwh,
       0
     );
 &nbsp;
-    const totalCompensatedEnergy = <span class="cstat-no" title="statement not covered" >invoices.reduce(</span>
-<span class="fstat-no" title="function not covered" >      (a</span>cc, invoice) =&gt; <span class="cstat-no" title="statement not covered" >acc + invoice.compensatedEnergyGDIKwh,</span>
+    const totalCompensatedEnergy = invoices.reduce(
+      (acc, invoice) =&gt; acc + invoice.compensatedEnergyGDIKwh,
       0
     );
 &nbsp;
-    const totalValueWithoutGD = <span class="cstat-no" title="statement not covered" >invoices.reduce(</span>
-<span class="fstat-no" title="function not covered" >      (a</span>cc, invoice) =&gt;
-<span class="cstat-no" title="statement not covered" >        acc + invoice.electricityValue + invoice.sceeEnergyValue,</span>
+    const totalValueWithoutGD = invoices.reduce(
+      (acc, invoice) =&gt;
+        acc + invoice.electricityValue + invoice.sceeEnergyValue,
       0
     );
 &nbsp;
-    const totalEconomyGD = <span class="cstat-no" title="statement not covered" >invoices.reduce(</span>
-<span class="fstat-no" title="function not covered" >      (a</span>cc, invoice) =&gt; <span class="cstat-no" title="statement not covered" >acc + invoice.compensatedEnergyGDIValue,</span>
+    const totalEconomyGD = invoices.reduce(
+      (acc, invoice) =&gt; acc + invoice.compensatedEnergyGDIValue,
       0
     );
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    return {</span>
+    return {
       totalEnergyConsumption,
       totalCompensatedEnergy,
       totalValueWithoutGD,
@@ -184,7 +184,7 @@ export class DashboardService {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-10-19T19:12:45.776Z
+                at 2024-10-20T00:01:24.054Z
             </div>
         <script src="../prettify.js"></script>
         <script>

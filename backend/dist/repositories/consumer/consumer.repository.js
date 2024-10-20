@@ -9,25 +9,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InvoiceRepository = void 0;
-class InvoiceRepository {
+exports.ConsumerRepository = void 0;
+class ConsumerRepository {
     constructor(prisma) {
         this.prisma = prisma;
     }
     findFirst(where) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.prisma.invoice.findFirst({ where });
+            return this.prisma.consumerUnit.findFirst({ where });
         });
     }
     findMany(where) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.prisma.invoice.findMany({ where });
+            return this.prisma.consumerUnit.findMany({
+                where,
+                include: { invoices: true },
+            });
         });
     }
     create(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.prisma.invoice.create({ data });
+            return this.prisma.consumerUnit.create({ data });
         });
     }
 }
-exports.InvoiceRepository = InvoiceRepository;
+exports.ConsumerRepository = ConsumerRepository;

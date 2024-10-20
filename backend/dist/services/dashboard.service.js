@@ -10,12 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardService = void 0;
-const client_1 = require("@prisma/client");
-const prisma = new client_1.PrismaClient();
 class DashboardService {
+    constructor(prisma) {
+        this.prisma = prisma;
+    }
     getDashboardData() {
         return __awaiter(this, void 0, void 0, function* () {
-            const invoices = yield prisma.invoice.findMany();
+            const invoices = yield this.prisma.invoice.findMany();
             const totalEnergyConsumption = invoices.reduce((acc, invoice) => acc + invoice.electricityKwh + invoice.sceeEnergyKwh, 0);
             const totalCompensatedEnergy = invoices.reduce((acc, invoice) => acc + invoice.compensatedEnergyGDIKwh, 0);
             const totalValueWithoutGD = invoices.reduce((acc, invoice) => acc + invoice.electricityValue + invoice.sceeEnergyValue, 0);

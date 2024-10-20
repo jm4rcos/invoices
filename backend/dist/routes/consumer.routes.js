@@ -1,10 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const client_1 = require("@prisma/client");
 const consumer_controller_1 = require("../controllers/consumer.controller");
+const consumer_repository_1 = require("../repositories/consumer/consumer.repository");
 const consumer_service_1 = require("../services/consumer.service");
 const consumerRouter = (0, express_1.Router)();
-const consumerService = new consumer_service_1.ConsumerService();
+const prisma = new client_1.PrismaClient();
+const consumerRepository = new consumer_repository_1.ConsumerRepository(prisma);
+const consumerService = new consumer_service_1.ConsumerService(consumerRepository);
 const consumerController = new consumer_controller_1.ConsumerController(consumerService);
 consumerRouter.get("/", consumerController.getAllConsumerUnits.bind(consumerController));
 consumerRouter.get("/:clientNumber", consumerController.getConsumerUnit.bind(consumerController));

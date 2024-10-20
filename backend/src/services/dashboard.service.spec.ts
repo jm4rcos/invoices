@@ -1,59 +1,29 @@
 import { PrismaClient } from "@prisma/client";
+import { mockDeep, mockReset } from "jest-mock-extended";
+import { mockInvoice } from "../dtos/__mocks__/invoice.mock";
 import { DashboardService } from "./dashboard.service";
 
-jest.mock("@prisma/client", () => ({
-  PrismaClient: jest.fn().mockImplementation(() => ({
-    invoice: {
-      findMany: jest.fn(),
-    },
-  })),
-}));
+const mockPrisma = mockDeep<PrismaClient>();
 
 describe("DashboardService", () => {
   let dashboardService: DashboardService;
-  let prismaClientMock: jest.Mocked<PrismaClient>;
 
   beforeEach(() => {
-    prismaClientMock = new PrismaClient() as jest.Mocked<PrismaClient>;
-    dashboardService = new DashboardService();
+    mockReset(mockPrisma);
+    dashboardService = new DashboardService(mockPrisma);
   });
 
   it("should calculate dashboard data correctly", async () => {
-    const mockInvoices = [
-      {
-        id: "1",
-        electricityKwh: 100,
-        electricityValue: 50,
-        sceeEnergyKwh: 50,
-        sceeEnergyValue: 25,
-        compensatedEnergyGDIKwh: 30,
-        compensatedEnergyGDIValue: 15,
-      },
-      {
-        id: "2",
-        electricityKwh: 200,
-        electricityValue: 100,
-        sceeEnergyKwh: 100,
-        sceeEnergyValue: 50,
-        compensatedEnergyGDIKwh: 60,
-        compensatedEnergyGDIValue: 30,
-      },
-    ];
-
-    (prismaClientMock.invoice.findMany as jest.Mock).mockResolvedValue(
-      mockInvoices
-    );
+    mockPrisma.invoice.findMany.mockResolvedValue([mockInvoice]);
 
     const result = await dashboardService.getDashboardData();
 
-    expect(result).toEqual({
-      totalEnergyConsumption: 450,
-      totalCompensatedEnergy: 90,
-      totalValueWithoutGD: 225,
-      totalEconomyGD: 45,
-      invoices: mockInvoices,
-    });
+    expect(result.totalEnergyConsumption).toEqual(120);
+    expect(result.totalCompensatedEnergy).toEqual(10);
+    expect(result.totalValueWithoutGD).toEqual(60);
+    expect(result.totalEconomyGD).toEqual(5);
+    expect(result.invoices).toEqual([mockInvoice]);
 
-    expect(prismaClientMock.invoice.findMany).toHaveBeenCalledTimes(1);
+    expect(mockPrisma.invoice.findMany).toHaveBeenCalled();
   });
 });

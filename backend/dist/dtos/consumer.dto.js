@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateConsumerDto = exports.ConsumerDto = void 0;
+exports.mockWhereConsumer = exports.CreateConsumerDto = exports.ConsumerDto = void 0;
 const zod_1 = require("zod");
 const ConsumerDto = zod_1.z.object({
     id: zod_1.z.string(),
@@ -17,3 +17,9 @@ const CreateConsumerDto = zod_1.z.object({
     installationNumber: zod_1.z.string().min(1).max(255),
 });
 exports.CreateConsumerDto = CreateConsumerDto;
+const mockWhereConsumer = {
+    id: "1",
+    consumerUnitId: "1",
+    referenceMonth: "JAN/2023",
+};
+exports.mockWhereConsumer = mockWhereConsumer;
