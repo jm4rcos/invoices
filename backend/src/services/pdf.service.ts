@@ -60,7 +60,7 @@ export class PdfService {
   }
 
   private extractInstallationNumber(text: string): string {
-    const regex = /\s*(\d+)\s+(?=Referente a)/; // Captura o número antes de "Referente a"
+    const regex = /\s*(\d+)\s+(?=Referente a)/;
     const match = text.match(regex);
 
     if (match && match[1]) {

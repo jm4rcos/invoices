@@ -1,4 +1,3 @@
-// src/repositories/IConsumerRepository.ts
 import { ConsumerUnit } from "@prisma/client";
 import { CreateConsumer } from "../../dtos/consumer.dto";
 
